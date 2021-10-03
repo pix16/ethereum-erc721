@@ -22,3 +22,5 @@ metadata/
 #coverage
 coverage.json
 coverage
+#secrets
+secrets.json
