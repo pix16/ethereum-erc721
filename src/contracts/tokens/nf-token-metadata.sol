@@ -23,11 +23,6 @@ contract NFTokenMetadata is
   string internal nftSymbol;
 
   /**
-   * @dev Mapping from NFT ID to metadata uri.
-   */
-  mapping (uint256 => string) internal idToUri;
-
-  /**
    * @notice When implementing this contract don't forget to set nftName and nftSymbol.
    * @dev Contract constructor.
    */
@@ -71,12 +66,14 @@ contract NFTokenMetadata is
     uint256 _tokenId
   )
     external
+    virtual
     override
     view
     validNFToken(_tokenId)
     returns (string memory)
   {
-    return idToUri[_tokenId];
+    //return empty json using data uri scheme
+    return "data:application/json;base64,e30=";
   }
 
   /**
@@ -95,26 +92,6 @@ contract NFTokenMetadata is
     virtual
   {
     super._burn(_tokenId);
-
-    delete idToUri[_tokenId];
-  }
-
-  /**
-   * @notice This is an internal function which should be called from user-implemented external
-   * function. Its purpose is to show and properly initialize data structures when using this
-   * implementation.
-   * @dev Set a distinct URI (RFC 3986) for a given NFT ID.
-   * @param _tokenId Id for which we want URI.
-   * @param _uri String representing RFC 3986 URI.
-   */
-  function _setTokenUri(
-    uint256 _tokenId,
-    string memory _uri
-  )
-    internal
-    validNFToken(_tokenId)
-  {
-    idToUri[_tokenId] = _uri;
   }
 
 }
