@@ -316,29 +316,6 @@ contract NFToken is
   }
 
   /**
-   * @notice This is an internal function which should be called from user-implemented external
-   * mint function. Its purpose is to show and properly initialize data structures when using this
-   * implementation.
-   * @dev Mints a new NFT.
-   * @param _to The address that will own the minted NFT.
-   * @param _tokenId of the NFT to be minted by the msg.sender.
-   */
-  function _mint(
-    address _to,
-    uint256 _tokenId
-  )
-    internal
-    virtual
-  {
-    require(_to != address(0), ZERO_ADDRESS);
-    require(idToOwner[_tokenId] == address(0), NFT_ALREADY_EXISTS);
-
-    _addNFToken(_to, _tokenId);
-
-    emit Transfer(address(0), _to, _tokenId);
-  }
-
-  /**
    * @notice This is an internal function which should be called from user-implemented external burn
    * function. Its purpose is to show and properly initialize data structures when using this
    * implementation. Also, note that this burn implementation allows the minter to re-mint a burned

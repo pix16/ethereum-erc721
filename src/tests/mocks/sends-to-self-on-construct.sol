@@ -12,7 +12,6 @@ contract SendsToSelfOnConstruct is
   constructor()
   {
     NFTokenMock tokens = new NFTokenMock();
-    tokens.mint(address(this), TOKEN_ID);
     tokens.safeTransferFrom(address(this), address(this), TOKEN_ID);
   }
 

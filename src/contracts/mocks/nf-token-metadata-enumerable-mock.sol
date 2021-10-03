@@ -30,24 +30,6 @@ contract NFTokenMetadataEnumerableMock is
   }
 
   /**
-   * @dev Mints a new NFT.
-   * @param _to The address that will own the minted NFT.
-   * @param _tokenId of the NFT to be minted by the msg.sender.
-   * @param _uri String representing RFC 3986 URI.
-   */
-  function mint(
-    address _to,
-    uint256 _tokenId,
-    string calldata _uri
-  )
-    external
-    onlyOwner
-  {
-    super._mint(_to, _tokenId);
-    super._setTokenUri(_tokenId, _uri);
-  }
-
-  /**
    * @dev Removes a NFT from owner.
    * @param _tokenId Which NFT we want to remove.
    */
@@ -58,25 +40,6 @@ contract NFTokenMetadataEnumerableMock is
     onlyOwner
   {
     super._burn(_tokenId);
-  }
-
-  /**
-   * @dev Mints a new NFT.
-   * @notice This is an internal function which should be called from user-implemented external
-   * mint function. Its purpose is to show and properly initialize data structures when using this
-   * implementation.
-   * @param _to The address that will own the minted NFT.
-   * @param _tokenId of the NFT to be minted by the msg.sender.
-   */
-  function _mint(
-    address _to,
-    uint256 _tokenId
-  )
-    internal
-    override(NFToken, NFTokenEnumerable)
-    virtual
-  {
-    NFTokenEnumerable._mint(_to, _tokenId);
   }
 
   /**
@@ -93,13 +56,13 @@ contract NFTokenMetadataEnumerableMock is
     internal
     override(NFTokenMetadata, NFTokenEnumerable)
     virtual
-  {
-    NFTokenEnumerable._burn(_tokenId);
-    if (bytes(idToUri[_tokenId]).length != 0)
     {
-      delete idToUri[_tokenId];
+      NFTokenEnumerable._burn(_tokenId);
+      if (bytes(idToUri[_tokenId]).length != 0)
+      {
+        delete idToUri[_tokenId];
+      }
     }
-  }
 
   /**
    * @notice Use and override this function with caution. Wrong usage can have serious consequences.
@@ -117,7 +80,7 @@ contract NFTokenMetadataEnumerableMock is
     NFTokenEnumerable._removeNFToken(_from, _tokenId);
   }
 
-  /**
+    /**
    * @notice Use and override this function with caution. Wrong usage can have serious consequences.
    * @dev Assigns a new NFT to an address.
    * @param _to Address to wich we want to add the NFT.
