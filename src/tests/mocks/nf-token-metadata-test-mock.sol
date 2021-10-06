@@ -22,6 +22,6 @@ contract NFTokenMetadataTestMock is
     view
     returns (string memory)
   {
-    return super.tokenURI(_tokenId);
+    return "data:application/json;base64,e30=";
   }
 }
