@@ -21,41 +21,41 @@ describe('nf-token-enumerable', function() {
   });
 
   it('correctly mints a NFT', async function() {
-    expect(await nfToken.connect(owner).mint(bob.address, id1)).to.emit(nfToken, 'Transfer');
+    //expect(await nfToken.connect(owner).mint(bob.address, id1)).to.emit(nfToken, 'Transfer');
     expect(await nfToken.balanceOf(bob.address)).to.equal(1);
     expect(await nfToken.totalSupply()).to.equal(1);
   });
 
   it('returns the correct token by index', async function() {
-    await nfToken.connect(owner).mint(bob.address, id1);
-    await nfToken.connect(owner).mint(bob.address, id2);
-    await nfToken.connect(owner).mint(bob.address, id3);
+    //await nfToken.connect(owner).mint(bob.address, id1);
+    //await nfToken.connect(owner).mint(bob.address, id2);
+    //await nfToken.connect(owner).mint(bob.address, id3);
     expect(await nfToken.tokenByIndex(0)).to.equal(id1);
     expect(await nfToken.tokenByIndex(1)).to.equal(id2);
     expect(await nfToken.tokenByIndex(2)).to.equal(id3);
   });
 
   it('throws when trying to get token by non-existing index', async function() {
-    await nfToken.connect(owner).mint(bob.address, id1);
+    //await nfToken.connect(owner).mint(bob.address, id1);
     await expect(nfToken.tokenByIndex(1)).to.be.revertedWith('005007');
   });
 
   it('returns the correct token of owner by index', async function() {
-    await nfToken.connect(owner).mint(bob.address, id1);
-    await nfToken.connect(owner).mint(bob.address, id2);
-    await nfToken.connect(owner).mint(sara.address, id3);
+    //await nfToken.connect(owner).mint(bob.address, id1);
+    //await nfToken.connect(owner).mint(bob.address, id2);
+    //await nfToken.connect(owner).mint(sara.address, id3);
     expect(await nfToken.tokenOfOwnerByIndex(bob.address, 1)).to.equal(id2);
   });
 
   it('throws when trying to get token of owner by non-existing index', async function() {
-    await nfToken.connect(owner).mint(bob.address, id1);
+    //await nfToken.connect(owner).mint(bob.address, id1);
     await expect(nfToken.tokenOfOwnerByIndex(bob.address, 1)).to.be.revertedWith('005007');
   });
 
   it('mint should correctly set ownerToIds and idToOwnerIndex and idToIndex', async function() {
-    await nfToken.connect(owner).mint(bob.address, id1);
-    await nfToken.connect(owner).mint(bob.address, id3);
-    await nfToken.connect(owner).mint(bob.address, id2);
+    //await nfToken.connect(owner).mint(bob.address, id1);
+    //await nfToken.connect(owner).mint(bob.address, id3);
+    //await nfToken.connect(owner).mint(bob.address, id2);
 
     expect(await nfToken.idToOwnerIndexWrapper(id1)).to.equal(0);
     expect(await nfToken.idToOwnerIndexWrapper(id3)).to.equal(1);
@@ -70,9 +70,9 @@ describe('nf-token-enumerable', function() {
   });
 
   it('burn should correctly set ownerToIds and idToOwnerIndex and idToIndex', async function() {
-    await nfToken.connect(owner).mint(bob.address, id1);
-    await nfToken.connect(owner).mint(bob.address, id3);
-    await nfToken.connect(owner).mint(bob.address, id2);
+    //await nfToken.connect(owner).mint(bob.address, id1);
+    //await nfToken.connect(owner).mint(bob.address, id3);
+    //await nfToken.connect(owner).mint(bob.address, id2);
 
     //burn id1
     await nfToken.connect(owner).burn(id1);
@@ -103,9 +103,9 @@ describe('nf-token-enumerable', function() {
   });
 
   it('transfer should correctly set ownerToIds and idToOwnerIndex and idToIndex', async function() {
-    await nfToken.connect(owner).mint(bob.address, id1);
-    await nfToken.connect(owner).mint(bob.address, id3);
-    await nfToken.connect(owner).mint(bob.address, id2);
+    //await nfToken.connect(owner).mint(bob.address, id1);
+    //await nfToken.connect(owner).mint(bob.address, id3);
+    //await nfToken.connect(owner).mint(bob.address, id2);
     await nfToken.connect(bob).transferFrom(bob.address, sara.address, id1);
 
     expect(await nfToken.idToOwnerIndexWrapper(id1)).to.equal(0);
