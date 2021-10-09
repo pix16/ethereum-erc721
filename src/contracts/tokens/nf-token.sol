@@ -57,6 +57,26 @@ contract NFToken is
   mapping (address => mapping (address => bool)) internal ownerToOperators;
 
   /**
+   * @dev Mapping from NFT ID to burned status.
+   */
+  mapping(uint256 => bool) internal idToBurned;
+
+  /**
+   * @dev Address of the author, who is the default tokens owner.
+   */
+  address author;
+
+  /**
+   * @dev Maximum NFT ID value (Ids start from 0).
+   */
+  uint256 constant maxTokenId=61-1;
+
+  /**
+   * @dev Total supply.
+   */
+  uint256 public totalSupply = maxTokenId+1;
+  
+  /**
    * @dev Guarantees that the msg.sender is an owner or operator of the given NFT.
    * @param _tokenId ID of the NFT to validate.
    */
@@ -64,7 +84,7 @@ contract NFToken is
     uint256 _tokenId
   )
   {
-    address tokenOwner = idToOwner[_tokenId];
+    address tokenOwner = ownerOf(_tokenId);
     require(
       tokenOwner == msg.sender || ownerToOperators[tokenOwner][msg.sender],
       NOT_OWNER_OR_OPERATOR
@@ -80,7 +100,7 @@ contract NFToken is
     uint256 _tokenId
   )
   {
-    address tokenOwner = idToOwner[_tokenId];
+    address tokenOwner = ownerOf(_tokenId);
     require(
       tokenOwner == msg.sender
       || idToApproval[_tokenId] == msg.sender
@@ -98,7 +118,7 @@ contract NFToken is
     uint256 _tokenId
   )
   {
-    require(idToOwner[_tokenId] != address(0), NOT_VALID_NFT);
+    require(!idToBurned[_tokenId], NOT_VALID_NFT);
     _;
   }
 
@@ -108,6 +128,9 @@ contract NFToken is
   constructor()
   {
     supportedInterfaces[0x80ac58cd] = true; // ERC721
+    author = owner;
+    totalSupply = maxTokenId+1;
+    ownerToNFTokenCount[author] = totalSupply;
   }
 
   /**
@@ -176,7 +199,7 @@ contract NFToken is
     canTransfer(_tokenId)
     validNFToken(_tokenId)
   {
-    address tokenOwner = idToOwner[_tokenId];
+    address tokenOwner = ownerOf(_tokenId);
     require(tokenOwner == _from, NOT_OWNER);
     require(_to != address(0), ZERO_ADDRESS);
 
@@ -199,7 +222,7 @@ contract NFToken is
     canOperate(_tokenId)
     validNFToken(_tokenId)
   {
-    address tokenOwner = idToOwner[_tokenId];
+    address tokenOwner = ownerOf(_tokenId);
     require(_approved != tokenOwner, IS_OWNER);
 
     idToApproval[_tokenId] = _approved;
@@ -251,13 +274,17 @@ contract NFToken is
   function ownerOf(
     uint256 _tokenId
   )
-    external
+    public
     override
     view
+    validNFToken(_tokenId)
     returns (address _owner)
   {
     _owner = idToOwner[_tokenId];
-    require(_owner != address(0), NOT_VALID_NFT);
+    if(_owner == address(0))
+    {
+      _owner = author;
+    }
   }
 
   /**
@@ -308,7 +335,7 @@ contract NFToken is
   )
     internal
   {
-    address from = idToOwner[_tokenId];
+    address from = ownerOf(_tokenId);
     _clearApproval(_tokenId);
 
     _removeNFToken(from, _tokenId);
@@ -332,9 +359,10 @@ contract NFToken is
     virtual
     validNFToken(_tokenId)
   {
-    address tokenOwner = idToOwner[_tokenId];
+    address tokenOwner = ownerOf(_tokenId);
     _clearApproval(_tokenId);
     _removeNFToken(tokenOwner, _tokenId);
+    idToBurned[_tokenId] = true;
     emit Transfer(tokenOwner, address(0), _tokenId);
   }
 
@@ -351,9 +379,12 @@ contract NFToken is
     internal
     virtual
   {
-    require(idToOwner[_tokenId] == _from, NOT_OWNER);
+    require(ownerOf(_tokenId) == _from, NOT_OWNER);
     ownerToNFTokenCount[_from] -= 1;
-    delete idToOwner[_tokenId];
+    if(_from != author)
+    {
+      delete idToOwner[_tokenId];
+    }
   }
 
   /**
@@ -368,10 +399,12 @@ contract NFToken is
   )
     internal
     virtual
+    //Callers already validate NFT is valid, skip calling validNFToken(_tokenId)
   {
-    require(idToOwner[_tokenId] == address(0), NFT_ALREADY_EXISTS);
-
-    idToOwner[_tokenId] = _to;
+    if(_to != author)
+    {
+      idToOwner[_tokenId] = _to;
+    }
     ownerToNFTokenCount[_to] += 1;
   }
 
@@ -409,7 +442,7 @@ contract NFToken is
     canTransfer(_tokenId)
     validNFToken(_tokenId)
   {
-    address tokenOwner = idToOwner[_tokenId];
+    address tokenOwner = ownerOf(_tokenId);
     require(tokenOwner == _from, NOT_OWNER);
     require(_to != address(0), ZERO_ADDRESS);
 
