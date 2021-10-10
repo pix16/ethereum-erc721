@@ -71,8 +71,8 @@ contract('Rings', function () {
     expectEvent(receipt, 'Transfer', { _from: buyer, _to: zeroAddress, _tokenId:tokenId });
     expect((await this.Rings.balanceOf(buyer)).toString()).to.equal('0');
     expect((await this.Rings.totalSupply()).toString()).to.equal((initialSupply-1).toString());  
-    await expectRevert(this.Rings.ownerOf(tokenId), '404');
-    await expectRevert(this.Rings.tokenURI(tokenId), '404');
+    await expectRevert(this.Rings.ownerOf(tokenId), '003002');
+    await expectRevert(this.Rings.tokenURI(tokenId), '003002');
   });//*/
 
   // Test case
