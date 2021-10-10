@@ -4,7 +4,7 @@ const { expect } = require('chai');
 describe('nf-token-metadata', function() {
   let nfToken, owner, bob;
   const id1 = 1;
-  const uri1 = 'http://0xcert.org/1';
+  const uri1 = 'data:application/json;base64,e30=';
 
   beforeEach(async () => {
     const nftContract = await ethers.getContractFactory('NFTokenMetadataTestMock');
@@ -12,7 +12,7 @@ describe('nf-token-metadata', function() {
       'Foo',
       'F',
     );
-    [ owner, bob] = await ethers.getSigners();
+    [owner, bob] = await ethers.getSigners();
     await nfToken.deployed();
   });
 
@@ -31,21 +31,22 @@ describe('nf-token-metadata', function() {
   });
 
   it('correctly mints a NFT', async function() {
-    //expect(await nfToken.connect(owner).mint(bob.address, id1, uri1)).to.emit(nfToken, 'Transfer');
+    expect(await nfToken.connect(owner).transferFrom(owner.address,bob.address, id1)).to.emit(nfToken, 'Transfer');
     expect(await nfToken.balanceOf(bob.address)).to.equal(1);
     expect(await nfToken.tokenURI(id1)).to.equal(uri1);
   });
 
   it('throws when trying to get URI of invalid NFT ID', async function() {
+    expect(await nfToken.connect(owner).burnToken(id1)).to.emit(nfToken, 'Transfer');
     await expect(nfToken.tokenURI(id1)).to.be.revertedWith('003002');
   });
 
   it('correctly burns a NFT', async function() {
-    //await nfToken.connect(owner).mint(bob.address, id1, uri1);
-    expect(await nfToken.connect(owner).burn(id1)).to.emit(nfToken, 'Transfer');
+    await nfToken.connect(owner).transferFrom(owner.address,bob.address, id1);
+    expect(await nfToken.connect(owner).burnToken(id1)).to.emit(nfToken, 'Transfer');
     expect(await nfToken.balanceOf(bob.address)).to.equal(0);
     await expect(nfToken.ownerOf(id1)).to.be.revertedWith('003002');
-    expect(await nfToken.checkUri(id1)).to.equal('');
+    //expect(await nfToken.checkUri(id1)).to.equal('');
   });
 
 });  

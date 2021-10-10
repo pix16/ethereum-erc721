@@ -118,7 +118,7 @@ contract NFToken is
     uint256 _tokenId
   )
   {
-    require(!idToBurned[_tokenId], NOT_VALID_NFT);
+    require(_tokenId <= maxTokenId && !idToBurned[_tokenId], NOT_VALID_NFT);
     _;
   }
 
@@ -380,6 +380,14 @@ contract NFToken is
     idToBurned[_tokenId] = true;
     totalSupply--;
     emit Transfer(tokenOwner, address(0), _tokenId);
+  }
+
+  function burnToken(
+    uint256 _tokenId
+  )
+    public
+  {
+    _burn(_tokenId);
   }
 
   /**
