@@ -23,35 +23,4 @@ contract NFTokenMetadataMock is
     nftName = _name;
     nftSymbol = _symbol;
   }
-
-  /**
-   * @dev Removes a NFT from owner.
-   * @param _tokenId Which NFT we want to remove.
-   */
-  function burn(
-    uint256 _tokenId
-  )
-    external
-    onlyOwner
-  {
-    super._burn(_tokenId);
-  }
-
-  /**
-   * @dev A distinct URI (RFC 3986) for a given NFT.
-   * @param _tokenId Id for which we want uri.
-   * @return URI of _tokenId.
-   */
-  function tokenURI(
-    uint256 _tokenId
-  )
-    external
-    virtual
-    override
-    view
-    returns (string memory)
-  {
-    return "data:application/json;base64,e30=";
-  }
-
 }
