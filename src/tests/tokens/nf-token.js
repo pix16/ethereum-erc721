@@ -5,6 +5,7 @@ describe('nf-token', function() {
   const zeroAddress = '0x0000000000000000000000000000000000000000';
   const id1 = 12;
   const id2 = 14;
+  const id3 = 10000000000;
 
   beforeEach(async () => {
     const nftContract = await ethers.getContractFactory('NFTokenTestMock');
@@ -48,9 +49,9 @@ describe('nf-token', function() {
     expect(await nfToken.ownerOf(id1)).to.equal(bob.address);
   });
 
-  /*it('throws when trying to find owner of non-existing NFT id', async function() {
-    await expect(nfToken.ownerOf(id1)).to.be.revertedWith('003002');
-  });*/
+  it('throws when trying to find owner of non-existing NFT id', async function() {
+    await expect(nfToken.ownerOf(id3)).to.be.revertedWith('003002');
+  });
 
   it('correctly approves account', async function() {
     await nfToken.connect(owner).transferFrom(owner.address,bob.address, id1);
@@ -66,8 +67,7 @@ describe('nf-token', function() {
   });
 
   it('throws when trying to get approval of non-existing NFT id', async function() {
-    expect(await nfToken.connect(owner).burnToken(id1)).to.emit(nfToken, 'Transfer');
-    await expect(nfToken.getApproved(id1)).to.be.revertedWith('003002');
+    await expect(nfToken.getApproved(id3)).to.be.revertedWith('003002');
   });
 
   it('throws when trying to approve NFT ID from a third party', async function() {
@@ -176,9 +176,9 @@ describe('nf-token', function() {
     await expect(nfToken.ownerOf(id1)).to.be.revertedWith('003002');
   });
 
-  /*it('throws when trying to burn non existent NFT', async function() {
-    await expect(nfToken.connect(owner).burnToken(id1)).to.be.revertedWith('003002');
-  });*/
+  it('throws when trying to burn non existent NFT', async function() {
+    await expect(nfToken.connect(owner).burnToken(id3)).to.be.revertedWith('003002');
+  });
 
   // it.only('safeTransfer does not call onERC721Received to constructing contract', async function() {
   //   const sendsToSelfOnConstructContract = await ethers.getContractFactory('SendsToSelfOnConstruct');
