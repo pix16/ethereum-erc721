@@ -83,6 +83,9 @@ contract('Rings', function () {
     expect((await this.Rings.totalSupply()).toString()).to.equal((initialSupply-1).toString());  
     await expectRevert(this.Rings.ownerOf(tokenId), '003002');
     await expectRevert(this.Rings.tokenURI(tokenId), '003002');
+
+    await expectRevert(this.Rings.ownerOf(initialSupply), '003002');
+    await expectRevert(this.Rings.tokenURI(initialSupply), '003002');
   });//*/
 
   // Test case
