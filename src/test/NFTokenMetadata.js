@@ -58,17 +58,17 @@ contract('Rings', function () {
   it('Transfer a token', async function () {
     expect((await this.Rings.balanceOf(buyer)).toString()).to.equal('0');
     const receipt = await this.Rings.transferFrom(owner,buyer,tokenId);
-    expectEvent(receipt, 'Transfer', { from: owner, to: buyer, tokenId:tokenId });
+    expectEvent(receipt, 'Transfer', { _from: owner, _to: buyer, _tokenId:tokenId });
     expect((await this.Rings.balanceOf(buyer)).toString()).to.equal('1');
     expect((await this.Rings.ownerOf(tokenId)).toString()).to.equal(buyer);
-    await expectRevert(this.Rings.transferFrom(owner,buyer,tokenId), '401');
+    await expectRevert(this.Rings.transferFrom(owner,buyer,tokenId), '003004');
   });
 
   // Test case
   it('Burn a token', async function () {
     await this.Rings.transferFrom(owner,buyer,tokenId)
     const receipt = await this.Rings.burnToken(tokenId,{ from: buyer });
-    expectEvent(receipt, 'Transfer', { from: buyer, to: zeroAddress, tokenId:tokenId });
+    expectEvent(receipt, 'Transfer', { _from: buyer, _to: zeroAddress, _tokenId:tokenId });
     expect((await this.Rings.balanceOf(buyer)).toString()).to.equal('0');
     expect((await this.Rings.totalSupply()).toString()).to.equal((initialSupply-1).toString());  
     await expectRevert(this.Rings.ownerOf(tokenId), '404');
@@ -79,7 +79,7 @@ contract('Rings', function () {
   it('Approve for a token and transfer', async function () {
     expect((await this.Rings.getApproved(tokenId)).toString()).to.equal(zeroAddress);
     const receipt = await this.Rings.approve(operatorSingleToken, tokenId)
-    expectEvent(receipt, 'Approval', { owner: owner, approved: operatorSingleToken, tokenId:tokenId });
+    expectEvent(receipt, 'Approval', { _owner: owner, _approved: operatorSingleToken, _tokenId:tokenId });
     expect((await this.Rings.getApproved(tokenId)).toString()).to.equal(operatorSingleToken);
     
     await this.Rings.transferFrom(owner,buyer,tokenId,{ from: operatorSingleToken })
@@ -103,7 +103,7 @@ contract('Rings', function () {
     
     expect((await this.Rings.isApprovedForAll(owner, operatorAllTokens)).toString()).to.equal('false');
     const receipt = await this.Rings.setApprovalForAll(operatorAllTokens, true) 
-    expectEvent(receipt, 'ApprovalForAll', { owner: owner, operator: operatorAllTokens, approved:true});
+    expectEvent(receipt, 'ApprovalForAll', { _owner: owner, _operator: operatorAllTokens, _approved:true});
     
     expect((await this.Rings.isApprovedForAll(owner, operatorAllTokens)).toString()).to.equal('true');
     await this.Rings.approve(operatorSingleToken, tokenId)

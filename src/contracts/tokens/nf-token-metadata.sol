@@ -84,12 +84,10 @@ contract NFTokenMetadata is
    * @dev Burns a NFT.
    * @param _tokenId ID of the NFT to be burned.
    */
-  function _burn(
+  function burnToken(
     uint256 _tokenId
   )
-    internal
-    override
-    virtual
+    public
   {
     super._burn(_tokenId);
   }

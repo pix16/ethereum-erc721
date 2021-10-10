@@ -363,6 +363,7 @@ contract NFToken is
     _clearApproval(_tokenId);
     _removeNFToken(tokenOwner, _tokenId);
     idToBurned[_tokenId] = true;
+    totalSupply--;
     emit Transfer(tokenOwner, address(0), _tokenId);
   }
 
