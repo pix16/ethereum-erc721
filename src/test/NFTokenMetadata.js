@@ -28,6 +28,7 @@ contract('Rings', function () {
 
   it('Total supply', async function () {
     expect((await this.Rings.totalSupply()).toString()).to.equal(initialSupply.toString());
+    expect((await this.Rings.balanceOf(owner)).toString()).to.equal(initialSupply.toString());
   });
 
   it('Token URIs', async function () {
@@ -56,12 +57,21 @@ contract('Rings', function () {
 
   // Test case
   it('Transfer a token', async function () {
+    expect((await this.Rings.balanceOf(owner)).toString()).to.equal(initialSupply.toString());
+    expect((await this.Rings.ownerOf(tokenId)).toString()).to.equal(owner);
     expect((await this.Rings.balanceOf(buyer)).toString()).to.equal('0');
     const receipt = await this.Rings.transferFrom(owner,buyer,tokenId);
     expectEvent(receipt, 'Transfer', { _from: owner, _to: buyer, _tokenId:tokenId });
     expect((await this.Rings.balanceOf(buyer)).toString()).to.equal('1');
+    expect((await this.Rings.balanceOf(owner)).toString()).to.equal((initialSupply-1).toString());
     expect((await this.Rings.ownerOf(tokenId)).toString()).to.equal(buyer);
     await expectRevert(this.Rings.transferFrom(owner,buyer,tokenId), '003004');
+
+    const receipt2 = await this.Rings.transferFrom(buyer,owner,tokenId, { from: buyer });
+    expectEvent(receipt2, 'Transfer', { _from: buyer, _to: owner, _tokenId:tokenId });
+    expect((await this.Rings.balanceOf(buyer)).toString()).to.equal('0');
+    expect((await this.Rings.balanceOf(owner)).toString()).to.equal(initialSupply.toString());
+    expect((await this.Rings.ownerOf(tokenId)).toString()).to.equal(owner);
   });
 
   // Test case
